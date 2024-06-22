@@ -33,14 +33,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus
+import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus.START
+import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus.STOP
 import com.niyas.mishipay.utils.barcodedetectionprocessor.BarcodeDetectionProcessor
 import com.niyas.mishipay.utils.barcodedetectionprocessor.DetectionListener
 import java.util.concurrent.Executors
 
 @Composable
-fun ScannerScreen() {
+fun ScannerScreen(viewModel: BarcodeViewModel) {
 
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var barcodeProcessor: BarcodeDetectionProcessor? = null
 
     var hasCameraPermission by remember {
         mutableStateOf(
@@ -57,8 +62,39 @@ fun ScannerScreen() {
             hasCameraPermission = it
         })
 
+    viewModel.barcodeDetectionProcessorStatus.observe(lifecycleOwner) { status ->
+        when (status) {
+            START -> barcodeProcessor?.startProcessor()
+            else -> barcodeProcessor?.stopProcessor()
+        }
+    }
+
     if (hasCameraPermission) {
-        ScannerCameraPreview()
+        ScannerCameraPreview(getProductDetails = {
+            if (it != null)
+                viewModel.getProductById(id = it) { product ->
+                    if (product == null) {
+                        // FIXME: No Matching Product found
+                        Toast.makeText(context, "No Matching Product found", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        // FIXME: navigate to Product Listing page
+                        Toast.makeText(context, product.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                        viewModel.updateBarcodeDetectionProcessorStatus(STOP)
+                    }
+                }
+            else {
+                // FIXME: No Matching Product found
+                Toast.makeText(context, "No Matching Product found", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+        }, processorInstance = {
+            barcodeProcessor = it
+        }, setBarcodeProcessorStatus = {
+            viewModel.updateBarcodeDetectionProcessorStatus(it)
+        })
     } else {
         CameraPermissionDeniedMessage {
             cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
@@ -85,7 +121,11 @@ fun CameraPermissionDeniedMessage(requestPermission: () -> Unit) {
 }
 
 @Composable
-fun ScannerCameraPreview() {
+fun ScannerCameraPreview(
+    getProductDetails: (String?) -> Unit,
+    processorInstance: (BarcodeDetectionProcessor) -> Unit,
+    setBarcodeProcessorStatus: (BarcodeDetectionProcessorStatus) -> Unit
+) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -106,28 +146,39 @@ fun ScannerCameraPreview() {
                 preview.setSurfaceProvider(previewView.surfaceProvider)
             }
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
             val executor = Executors.newSingleThreadExecutor()
+            val barcodeDetectionProcessor: BarcodeDetectionProcessor?
 
-            val barcodeDetectionProcessor = BarcodeDetectionProcessor(object : DetectionListener {
+            barcodeDetectionProcessor = BarcodeDetectionProcessor(object : DetectionListener {
                 override fun onDetectionSuccess(barcode: Barcode) {
-
+                    getProductDetails(barcode.rawValue)
                 }
 
                 override fun onDetectionFailure(failureMessage: String?) {
+                    Toast.makeText(context, failureMessage, Toast.LENGTH_SHORT).show()
+                    setBarcodeProcessorStatus(STOP)
                 }
 
             })
+            processorInstance(barcodeDetectionProcessor)
+            setBarcodeProcessorStatus(START)
             val barcodeAnalysis = ImageAnalysis.Builder().build().apply {
                 setAnalyzer(executor, barcodeDetectionProcessor)
             }
 
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview, barcodeAnalysis)
+                cameraProvider.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    preview,
+                    barcodeAnalysis
+                )
             } catch (e: Exception) {
                 Toast.makeText(context, e.localizedMessage, Toast.LENGTH_LONG).show()
+                setBarcodeProcessorStatus(STOP)
             }
+
 
         }, ContextCompat.getMainExecutor(context))
         previewView
@@ -141,8 +192,10 @@ fun ScannerCameraPreview() {
     showSystemUi = true
 )
 @Composable
-fun ScannerScreenPreview() {
-    ScannerScreen()
+fun CameraPermissionDeniedMessagePreview() {
+    CameraPermissionDeniedMessage {
+
+    }
 }
 
 @Preview(
@@ -152,5 +205,11 @@ fun ScannerScreenPreview() {
 )
 @Composable
 fun ScannerViewPreview() {
-    ScannerCameraPreview()
+    ScannerCameraPreview(getProductDetails = {
+
+    }, processorInstance = {
+
+    }, setBarcodeProcessorStatus = {
+
+    })
 }

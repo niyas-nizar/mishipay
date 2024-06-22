@@ -60,3 +60,17 @@ X
 Q.idea/sonarlint/securityhotspotstore/d/2/d2a4383452aad84a18429a5844d31330a012a9e6,7\f\7fcac164c7a46b8fc6411ea93226c884af6044db
 ;
 gradlew.bat,2\a\2a45a911a8f1836b0b6c5b758962572012d8f8c3
+p
+@app/src/main/java/com/niyas/mishipay/data/network/BarcodeData.kt,d\3\d34ea38be23a2f6371e00858b81349f0c7fecf45
+p
+@app/src/main/java/com/niyas/mishipay/screens/BarcodeViewModel.kt,f\3\f3d6277f2bff0466e198a38fa3d9dc5ee50c3604
+q
+Aapp/src/main/java/com/niyas/mishipay/BarcodeScannerApplication.kt,c\4\c41bceccf49d955f480d1790cea0042efe0ceb37
+t
+Dapp/src/main/java/com/niyas/mishipay/repository/BarcodeRepository.kt,f\f\ff649f4e4ae2d9171d612b8706dcb408d77e4568
+{
+Kapp/src/main/java/com/niyas/mishipay/navigation/BarcodeScannerNavigation.kt,5\8\5889156890ae6615004d7a59143e268c7412033f
+x
+Happ/src/main/java/com/niyas/mishipay/navigation/BarcodeScannerScreens.kt,a\9\a99883efbb551d2b42238aaab22cdbcfa2a55e23
+|
+Lapp/src/main/java/com/niyas/mishipay/data/BarcodeDetectionProcessorStatus.kt,f\c\fcdba8d8d45780c28b2832638188afbeeba03fa7
