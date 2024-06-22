@@ -48,6 +48,16 @@ class BarcodeViewModel(
         }
     }
 
+    fun removeSameProductsFromCart(productData: ProductData, cartIsEmpty: (Boolean) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val updatedProducts = repository.removeSameProductsFromCart(productData)
+            withContext(Dispatchers.Main) {
+                _cartItems.value = updatedProducts
+                cartIsEmpty(updatedProducts.isEmpty())
+            }
+        }
+    }
+
     fun removeProductFromCart(productData: ProductData, cartIsEmpty: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val updatedProducts = repository.removeProductFromCart(productData)

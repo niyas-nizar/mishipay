@@ -60,11 +60,18 @@ fun CartScreen(viewModel: BarcodeViewModel, navController: NavHostController) {
 
     cartListingScreen(cartItems, showLoader = {
         showLoader = it
-    }, removeItem = {
-        viewModel.removeProductFromCart(it, cartIsEmpty = { cartIsEmpty ->
+    }, removeWholeProduct = {
+        viewModel.removeSameProductsFromCart(it, cartIsEmpty = { cartIsEmpty ->
             if (cartIsEmpty)
                 navController.popBackStack()
         })
+    }, addProduct = {
+        viewModel.addProductToCart(product = it)
+    }, removeProduct = {
+        viewModel.removeProductFromCart(it) { cartIsEmpty ->
+            if (cartIsEmpty)
+                navController.popBackStack()
+        }
     }, navController)
 
 }
@@ -73,7 +80,9 @@ fun CartScreen(viewModel: BarcodeViewModel, navController: NavHostController) {
 private fun cartListingScreen(
     cartItems: List<ProductData>,
     showLoader: (Boolean) -> Unit,
-    removeItem: (ProductData) -> Unit,
+    removeWholeProduct: (ProductData) -> Unit,
+    addProduct: (ProductData) -> Unit,
+    removeProduct: (ProductData) -> Unit,
     navController: NavHostController
 ) {
     Column {
@@ -87,9 +96,13 @@ private fun cartListingScreen(
         )
         LazyColumn(content = {
             items(items = cartItems) {
-                CartItem(it) {
-                    removeItem(it)
-                }
+                CartItem(it, removeWholeProduct = {
+                    removeWholeProduct(it)
+                }, addProduct = {
+                    addProduct(it)
+                }, removeProduct = {
+                    removeProduct(it)
+                })
             }
             showLoader(false)
         }, modifier = Modifier.weight(1f))
@@ -116,7 +129,12 @@ private fun cartListingScreen(
 
 
 @Composable
-fun CartItem(productData: ProductData, removeItem: () -> Unit) {
+fun CartItem(
+    productData: ProductData,
+    removeWholeProduct: () -> Unit,
+    addProduct: () -> Unit,
+    removeProduct: () -> Unit
+) {
     Card(
         modifier = Modifier.padding(8.dp), shape = RoundedCornerShape(16.dp)
     ) {
@@ -162,7 +180,7 @@ fun CartItem(productData: ProductData, removeItem: () -> Unit) {
                             modifier = Modifier
                                 .size(18.dp)
                                 .clickable {
-                                    removeItem()
+                                    removeWholeProduct()
                                 },
                             contentDescription = productData.description
                         )
@@ -184,7 +202,11 @@ fun CartItem(productData: ProductData, removeItem: () -> Unit) {
                         style = TextStyle(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.padding(8.dp)
                     )
-                    QuantitySelector(productData.quantity, addProduct = {}, removeProduct = {})
+                    QuantitySelector(
+                        productData.quantity,
+                        addProduct = addProduct,
+                        removeProduct = removeProduct
+                    )
                 }
             }
         }
@@ -242,16 +264,6 @@ fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduc
     }
 }
 
-/*@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showSystemUi = true
-)
-@Composable
-fun CartScreenPreview() {
-    CartScreen()
-}*/
-
 @Preview(
     showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO, showSystemUi = true
 )
@@ -265,9 +277,7 @@ fun CartItemPreview() {
         category = "Electronics",
         id = "12345"
     )
-    CartItem(product) {
-
-    }
+    CartItem(product, addProduct = {}, removeProduct = {}, removeWholeProduct = {})
 }
 
 @Preview(
@@ -306,7 +316,9 @@ fun CartScreenPreview() {
     cartListingScreen(
         cartItems = cartItems,
         showLoader = {},
-        removeItem = {},
+        removeWholeProduct = {},
+        addProduct = {},
+        removeProduct = {},
         navController = navController
     )
 }

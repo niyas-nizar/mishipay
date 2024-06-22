@@ -69,9 +69,20 @@ class BarcodeRepository {
 
     fun getProductsFromCart() = productsInCart
 
-    fun removeProductFromCart(product: ProductData): SnapshotStateList<ProductData> {
+    fun removeSameProductsFromCart(product: ProductData): SnapshotStateList<ProductData> {
         productsInCart.removeAll {
             it.id == product.id
+        }
+        return productsInCart
+    }
+
+    fun removeProductFromCart(product: ProductData): SnapshotStateList<ProductData> {
+        val existingProduct = productsInCart.find { it.id == product.id }
+        if (existingProduct != null && existingProduct.quantity > 0) {
+            existingProduct.quantity--
+            if (existingProduct.quantity == 0) {
+                productsInCart.remove(product)
+            }
         }
         return productsInCart
     }
