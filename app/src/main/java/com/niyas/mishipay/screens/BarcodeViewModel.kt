@@ -8,14 +8,17 @@ import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus
 import com.niyas.mishipay.data.network.ProductData
 import com.niyas.mishipay.repository.BarcodeRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class BarcodeViewModel(
     private val repository: BarcodeRepository = BarcodeRepository()
 ) : ViewModel() {
+
+    private var _cartItems = MutableStateFlow<List<ProductData>>(emptyList())
+    val cartItems: StateFlow<List<ProductData>> = _cartItems
 
     fun getProductById(id: String, productDetails: (ProductData?) -> Unit) =
         viewModelScope.launch(Dispatchers.IO) {
@@ -39,13 +42,18 @@ class BarcodeViewModel(
             repository.addProductToCart(product)
         }
 
-    fun getProductsFromCart(): Flow<List<ProductData>> = repository.getProductsFromCart()
-
-    fun removeProductFromCart(productData: ProductData) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.removeProductFromCart(productData)
+    fun getProductsFromCart() {
+        viewModelScope.launch {
+            val products = repository.getProductsFromCart()
+            _cartItems.emit(products)
         }
     }
 
+    fun removeProductFromCart(productData: ProductData) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val updatedProducts = repository.removeProductFromCart(productData)
+            _cartItems.emit(updatedProducts)
+        }
+    }
 
 }

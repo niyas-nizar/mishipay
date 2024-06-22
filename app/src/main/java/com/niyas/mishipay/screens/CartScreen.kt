@@ -50,8 +50,8 @@ fun CartScreen(viewModel: BarcodeViewModel, navController: NavHostController) {
     }
 
     if (showLoader) ShowProgress()
-
-    val cartItems by viewModel.getProductsFromCart().collectAsState(initial = emptyList())
+    viewModel.getProductsFromCart()
+    val cartItems by viewModel.cartItems.collectAsState()
 
     cartListingScreen(cartItems, showLoader = {
         showLoader = it

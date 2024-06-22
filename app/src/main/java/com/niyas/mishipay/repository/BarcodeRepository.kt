@@ -62,11 +62,10 @@ class BarcodeRepository {
         productsInCart.add(product)
     }
 
-    fun getProductsFromCart(): Flow<List<ProductData>> = flow {
-        emit(productsInCart)
-    }
+    fun getProductsFromCart() = productsInCart
 
-    fun removeProductFromCart(product: ProductData) {
+    fun removeProductFromCart(product: ProductData): List<ProductData> {
         productsInCart.remove(product)
+        return productsInCart
     }
 }
