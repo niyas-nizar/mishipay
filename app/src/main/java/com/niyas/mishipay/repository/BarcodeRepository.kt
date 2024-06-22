@@ -1,13 +1,13 @@
 package com.niyas.mishipay.repository
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.niyas.mishipay.data.network.ProductData
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class BarcodeRepository {
 
     private val availableProducts = generateProducts()
-    private val productsInCart = mutableListOf<ProductData>()
+    private val productsInCart: SnapshotStateList<ProductData> = mutableStateListOf()
 
     private fun generateProducts(): List<ProductData> {
         return listOf(
@@ -58,14 +58,22 @@ class BarcodeRepository {
 
     fun findProduct(id: String) = availableProducts.firstOrNull { it.id == id }
 
-    fun addProductToCart(product: ProductData) {
-        productsInCart.add(product)
+    fun upsertProductToCart(product: ProductData) {
+        val existingProduct = productsInCart.find { it.id == product.id }
+        if (existingProduct != null) {
+            existingProduct.quantity++
+        } else {
+            productsInCart.add(product.copy())
+        }
     }
 
     fun getProductsFromCart() = productsInCart
 
-    fun removeProductFromCart(product: ProductData): List<ProductData> {
-        productsInCart.remove(product)
+    fun removeProductFromCart(product: ProductData): SnapshotStateList<ProductData> {
+        productsInCart.removeAll {
+            it.id == product.id
+        }
         return productsInCart
     }
+
 }

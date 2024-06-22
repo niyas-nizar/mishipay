@@ -11,5 +11,6 @@ data class ProductData(
     val title: String,
     val description: String,
     val category: String,
-    val id: String
+    val id: String,
+    var quantity: Int = 1
 ) :Parcelable

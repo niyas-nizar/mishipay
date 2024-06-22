@@ -1,7 +1,9 @@
 package com.niyas.mishipay.screens
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,11 +21,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -51,12 +55,16 @@ fun CartScreen(viewModel: BarcodeViewModel, navController: NavHostController) {
 
     if (showLoader) ShowProgress()
     viewModel.getProductsFromCart()
-    val cartItems by viewModel.cartItems.collectAsState()
+
+    val cartItems by viewModel.cartItems.observeAsState(emptyList())
 
     cartListingScreen(cartItems, showLoader = {
         showLoader = it
     }, removeItem = {
-        viewModel.removeProductFromCart(it)
+        viewModel.removeProductFromCart(it, cartIsEmpty = { cartIsEmpty ->
+            if (cartIsEmpty)
+                navController.popBackStack()
+        })
     }, navController)
 
 }
@@ -154,7 +162,6 @@ fun CartItem(productData: ProductData, removeItem: () -> Unit) {
                             modifier = Modifier
                                 .size(18.dp)
                                 .clickable {
-                                    // FIXME: Remove item from listing
                                     removeItem()
                                 },
                             contentDescription = productData.description
@@ -177,17 +184,63 @@ fun CartItem(productData: ProductData, removeItem: () -> Unit) {
                         style = TextStyle(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.padding(8.dp)
                     )
-
+                    QuantitySelector(productData.quantity, addProduct = {}, removeProduct = {})
                 }
-
-
             }
-
         }
     }
 
 }
 
+
+@Composable
+fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduct: () -> Unit) {
+    var quantity by remember { mutableIntStateOf(quantitySelected) }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(30.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.Gray)
+                .clickable {
+                    if (quantity > 0) {
+                        quantity--
+                        removeProduct()
+                    }
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "-", fontSize = 18.sp, color = Color.White)
+        }
+
+
+        Text(
+            text = quantity.toString(),
+            fontSize = 24.sp,
+            modifier = Modifier.padding(horizontal = 12.dp)
+        )
+
+
+        Box(
+            modifier = Modifier
+                .size(30.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.Gray)
+                .clickable {
+                    quantity++
+                    addProduct()
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "+", fontSize = 18.sp, color = Color.White)
+        }
+    }
+}
 
 /*@Preview(
     showBackground = true,
@@ -254,5 +307,6 @@ fun CartScreenPreview() {
         cartItems = cartItems,
         showLoader = {},
         removeItem = {},
-        navController = navController)
+        navController = navController
+    )
 }

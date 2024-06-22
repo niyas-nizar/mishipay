@@ -1,5 +1,6 @@
 package com.niyas.mishipay.screens
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,8 +9,6 @@ import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus
 import com.niyas.mishipay.data.network.ProductData
 import com.niyas.mishipay.repository.BarcodeRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -17,8 +16,8 @@ class BarcodeViewModel(
     private val repository: BarcodeRepository = BarcodeRepository()
 ) : ViewModel() {
 
-    private var _cartItems = MutableStateFlow<List<ProductData>>(emptyList())
-    val cartItems: StateFlow<List<ProductData>> = _cartItems
+    private var _cartItems = MutableLiveData<SnapshotStateList<ProductData>>()
+    val cartItems: LiveData<SnapshotStateList<ProductData>> = _cartItems
 
     fun getProductById(id: String, productDetails: (ProductData?) -> Unit) =
         viewModelScope.launch(Dispatchers.IO) {
@@ -39,20 +38,23 @@ class BarcodeViewModel(
 
     fun addProductToCart(product: ProductData) =
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addProductToCart(product)
+            repository.upsertProductToCart(product)
         }
 
     fun getProductsFromCart() {
         viewModelScope.launch {
             val products = repository.getProductsFromCart()
-            _cartItems.emit(products)
+            _cartItems.value = products
         }
     }
 
-    fun removeProductFromCart(productData: ProductData) {
+    fun removeProductFromCart(productData: ProductData, cartIsEmpty: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val updatedProducts = repository.removeProductFromCart(productData)
-            _cartItems.emit(updatedProducts)
+            withContext(Dispatchers.Main) {
+                _cartItems.value = updatedProducts
+                cartIsEmpty(updatedProducts.isEmpty())
+            }
         }
     }
 
