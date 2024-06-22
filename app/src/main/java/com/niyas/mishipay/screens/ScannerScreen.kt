@@ -3,6 +3,8 @@ package com.niyas.mishipay.screens
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Handler
+import android.os.Looper
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -11,10 +13,12 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -26,10 +30,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -62,6 +69,10 @@ fun ScannerScreen(viewModel: BarcodeViewModel) {
             hasCameraPermission = it
         })
 
+    var showNoProductFoundView by remember {
+        mutableStateOf(false)
+    }
+
     viewModel.barcodeDetectionProcessorStatus.observe(lifecycleOwner) { status ->
         when (status) {
             START -> barcodeProcessor?.startProcessor()
@@ -74,20 +85,17 @@ fun ScannerScreen(viewModel: BarcodeViewModel) {
             if (it != null)
                 viewModel.getProductById(id = it) { product ->
                     if (product == null) {
-                        // FIXME: No Matching Product found
-                        Toast.makeText(context, "No Matching Product found", Toast.LENGTH_SHORT)
-                            .show()
+                        showNoProductFoundView = true
                     } else {
                         // FIXME: navigate to Product Listing page
                         Toast.makeText(context, product.toString(), Toast.LENGTH_SHORT)
                             .show()
                         viewModel.updateBarcodeDetectionProcessorStatus(STOP)
+                        showNoProductFoundView = false
                     }
                 }
             else {
-                // FIXME: No Matching Product found
-                Toast.makeText(context, "No Matching Product found", Toast.LENGTH_SHORT)
-                    .show()
+                showNoProductFoundView = true
             }
 
         }, processorInstance = {
@@ -99,6 +107,34 @@ fun ScannerScreen(viewModel: BarcodeViewModel) {
         CameraPermissionDeniedMessage {
             cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
+    }
+
+    if (showNoProductFoundView) {
+        NoProductFound()
+        Handler(Looper.getMainLooper()).postDelayed({
+            showNoProductFoundView = false
+        }, 2000)
+    }
+}
+
+@Composable
+private fun NoProductFound() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Transparent),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(36.dp),
+            textAlign = TextAlign.Center,
+            text = "No Matching Product found",
+            color = Color.White,
+            fontSize = 20.sp,
+        )
     }
 }
 
@@ -158,7 +194,6 @@ fun ScannerCameraPreview(
                     Toast.makeText(context, failureMessage, Toast.LENGTH_SHORT).show()
                     setBarcodeProcessorStatus(STOP)
                 }
-
             })
             processorInstance(barcodeDetectionProcessor)
             setBarcodeProcessorStatus(START)
@@ -212,4 +247,14 @@ fun ScannerViewPreview() {
     }, setBarcodeProcessorStatus = {
 
     })
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showSystemUi = true
+)
+@Composable
+fun NoProductFoundPreview() {
+    NoProductFound()
 }
