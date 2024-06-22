@@ -39,20 +39,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavHostController
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus
 import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus.START
 import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus.STOP
+import com.niyas.mishipay.navigation.BarcodeScannerScreens
 import com.niyas.mishipay.utils.barcodedetectionprocessor.BarcodeDetectionProcessor
 import com.niyas.mishipay.utils.barcodedetectionprocessor.DetectionListener
 import java.util.concurrent.Executors
 
 @Composable
-fun ScannerScreen(viewModel: BarcodeViewModel) {
+fun ScannerScreen(viewModel: BarcodeViewModel, navController: NavHostController) {
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var barcodeProcessor: BarcodeDetectionProcessor? = null
+    var cameraProvider: ProcessCameraProvider? = null
 
     var hasCameraPermission by remember {
         mutableStateOf(
@@ -87,11 +90,11 @@ fun ScannerScreen(viewModel: BarcodeViewModel) {
                     if (product == null) {
                         showNoProductFoundView = true
                     } else {
-                        // FIXME: navigate to Product Listing page
-                        Toast.makeText(context, product.toString(), Toast.LENGTH_SHORT)
-                            .show()
                         viewModel.updateBarcodeDetectionProcessorStatus(STOP)
+                        viewModel.addProductToCart(product)
                         showNoProductFoundView = false
+                        cameraProvider?.unbindAll()
+                        navController.navigate(BarcodeScannerScreens.CART_SCREEN.name)
                     }
                 }
             else {
@@ -102,6 +105,8 @@ fun ScannerScreen(viewModel: BarcodeViewModel) {
             barcodeProcessor = it
         }, setBarcodeProcessorStatus = {
             viewModel.updateBarcodeDetectionProcessorStatus(it)
+        }, cameraProviderInstance = {
+            cameraProvider = it
         })
     } else {
         CameraPermissionDeniedMessage {
@@ -160,10 +165,18 @@ fun CameraPermissionDeniedMessage(requestPermission: () -> Unit) {
 fun ScannerCameraPreview(
     getProductDetails: (String?) -> Unit,
     processorInstance: (BarcodeDetectionProcessor) -> Unit,
-    setBarcodeProcessorStatus: (BarcodeDetectionProcessorStatus) -> Unit
+    setBarcodeProcessorStatus: (BarcodeDetectionProcessorStatus) -> Unit,
+    cameraProviderInstance: (ProcessCameraProvider) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    var lastDetectedBarcodeData by remember { mutableStateOf<String?>(null) }
+    var lastDetectionTime by remember { mutableStateOf(0L) }
+
+    var showLoader by remember {
+        mutableStateOf(true)
+    }
 
     AndroidView(factory = {
         val previewView = PreviewView(it).apply {
@@ -178,6 +191,7 @@ fun ScannerCameraPreview(
         cameraProviderFuture.addListener({
 
             val cameraProvider = cameraProviderFuture.get()
+            cameraProviderInstance(cameraProvider)
             val preview = androidx.camera.core.Preview.Builder().build().also { preview ->
                 preview.setSurfaceProvider(previewView.surfaceProvider)
             }
@@ -187,7 +201,13 @@ fun ScannerCameraPreview(
 
             barcodeDetectionProcessor = BarcodeDetectionProcessor(object : DetectionListener {
                 override fun onDetectionSuccess(barcode: Barcode) {
-                    getProductDetails(barcode.rawValue)
+                    val currentTime = System.currentTimeMillis()
+                    if (barcode.rawValue != lastDetectedBarcodeData || (currentTime - lastDetectionTime) > 2000) {
+                        lastDetectedBarcodeData = barcode.rawValue
+                        lastDetectionTime = currentTime
+
+                        getProductDetails(barcode.rawValue)
+                    }
                 }
 
                 override fun onDetectionFailure(failureMessage: String?) {
@@ -209,15 +229,19 @@ fun ScannerCameraPreview(
                     preview,
                     barcodeAnalysis
                 )
+                showLoader = false
             } catch (e: Exception) {
+                showLoader = false
                 Toast.makeText(context, e.localizedMessage, Toast.LENGTH_LONG).show()
                 setBarcodeProcessorStatus(STOP)
             }
-
-
         }, ContextCompat.getMainExecutor(context))
         previewView
     })
+
+    if (showLoader)
+        ShowProgress()
+
 }
 
 
@@ -245,6 +269,8 @@ fun ScannerViewPreview() {
     }, processorInstance = {
 
     }, setBarcodeProcessorStatus = {
+
+    }, cameraProviderInstance = {
 
     })
 }

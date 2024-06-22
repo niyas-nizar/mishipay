@@ -1,15 +1,9 @@
-package com.niyas.mishipay.repository
+package com.niyas.mishipay.screens.previewstaticdata
 
 import com.niyas.mishipay.data.network.ProductData
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
-class BarcodeRepository {
-
-    private val availableProducts = generateProducts()
-    private val productsInCart = mutableListOf<ProductData>()
-
-    private fun generateProducts(): List<ProductData> {
+object PreviewStaticData {
+    fun generateStaticData(): List<ProductData> {
         return listOf(
             ProductData(
                 price = "100",
@@ -54,19 +48,5 @@ class BarcodeRepository {
                 id = "12350"
             )
         )
-    }
-
-    fun findProduct(id: String) = availableProducts.firstOrNull { it.id == id }
-
-    fun addProductToCart(product: ProductData) {
-        productsInCart.add(product)
-    }
-
-    fun getProductsFromCart(): Flow<List<ProductData>> = flow {
-        emit(productsInCart)
-    }
-
-    fun removeProductFromCart(product: ProductData) {
-        productsInCart.remove(product)
     }
 }
