@@ -84,3 +84,7 @@ l
 <app/src/main/java/com/niyas/mishipay/screens/ShowProgress.kt,9\5\95f858731e55f399181421dec6b837bda1de7daa
 ‚
 Rapp/src/main/java/com/niyas/mishipay/screens/previewstaticdata/generateProducts.kt,6\4\64ed49377da00d552b4f0ef56fa6d28c64c2327c
+m
+=app/src/main/java/com/niyas/mishipay/screens/InvoiceScreen.kt,5\2\524f84c03f75618314a4da678dcedaabb282fcfd
+~
+Napp/src/main/java/com/niyas/mishipay/screens/composables/CartButtonsPreview.kt,7\8\78841a32ac508a1ddb6a9971f872d9dc93ea1f03

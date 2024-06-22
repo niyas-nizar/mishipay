@@ -87,4 +87,7 @@ class BarcodeRepository {
         return productsInCart
     }
 
+    fun getTotalAmountToPay() =
+        productsInCart.sumOf { it.price.toInt() * it.quantity }
+
 }

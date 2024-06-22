@@ -9,6 +9,8 @@ import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus
 import com.niyas.mishipay.data.network.ProductData
 import com.niyas.mishipay.repository.BarcodeRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -66,6 +68,13 @@ class BarcodeViewModel(
                 cartIsEmpty(updatedProducts.isEmpty())
             }
         }
+    }
+
+    fun getTotalAmountToPay(): Flow<Int> = flow {
+        val totalAmount = withContext(Dispatchers.IO) {
+            repository.getTotalAmountToPay()
+        }
+        emit(totalAmount)
     }
 
 }

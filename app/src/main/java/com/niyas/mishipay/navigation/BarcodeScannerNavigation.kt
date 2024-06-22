@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.niyas.mishipay.screens.BarcodeViewModel
 import com.niyas.mishipay.screens.CartScreen
+import com.niyas.mishipay.screens.InvoiceScreen
 import com.niyas.mishipay.screens.ScannerScreen
 
 @Composable
@@ -28,6 +29,7 @@ fun BarcodeScannerNavigation(viewModel: BarcodeViewModel, navController: NavHost
         }) {
             ScannerScreen(viewModel, navController)
         }
+
         composable(route = BarcodeScannerScreens.CART_SCREEN.name, exitTransition = {
             return@composable slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.End, tween(0)
@@ -38,6 +40,18 @@ fun BarcodeScannerNavigation(viewModel: BarcodeViewModel, navController: NavHost
             )
         }) {
             CartScreen(viewModel, navController)
+        }
+
+        composable(route = BarcodeScannerScreens.INVOICE_SCREEN.name, exitTransition = {
+            return@composable slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.End, tween(0)
+            )
+        }, popEnterTransition = {
+            return@composable slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.End, tween(0)
+            )
+        }) {
+            InvoiceScreen(viewModel, navController)
         }
 
     }

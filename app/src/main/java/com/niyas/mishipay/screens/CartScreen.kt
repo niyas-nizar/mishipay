@@ -44,6 +44,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.niyas.mishipay.data.network.ProductData
 import com.niyas.mishipay.navigation.BarcodeScannerScreens
+import com.niyas.mishipay.screens.composables.ReusableDoubleButtons
 import com.niyas.mishipay.screens.previewstaticdata.PreviewStaticData
 
 @Composable
@@ -106,24 +107,11 @@ private fun cartListingScreen(
             }
             showLoader(false)
         }, modifier = Modifier.weight(1f))
-        Button(
-            onClick = {
-                navController.popBackStack()
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        ) {
-            Text(text = "Add More Items")
-        }
-        Button(
-            onClick = {
-                navController.navigate(BarcodeScannerScreens.CHECKOUT_SCREEN.name)
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        ) {
-            Text(text = "Checkout")
-        }
+        ReusableDoubleButtons(negativeButtonAction = {
+            navController.popBackStack()
+        }, positiveButtonAction = {
+            navController.navigate(BarcodeScannerScreens.INVOICE_SCREEN.name)
+        }, negativeButtonText = "Add More Items", positiveButtonText = "Checkout")
     }
 }
 
@@ -197,7 +185,7 @@ fun CartItem(
                     )
 
                     Text(
-                        text = "${productData.price} RS",
+                        text = "${productData.price} Rs",
                         fontSize = 20.sp,
                         style = TextStyle(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.padding(8.dp)
@@ -217,7 +205,9 @@ fun CartItem(
 
 @Composable
 fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduct: () -> Unit) {
-    var quantity by remember { mutableIntStateOf(quantitySelected) }
+    var quantity by remember(quantitySelected) {
+        mutableIntStateOf(quantitySelected)
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
