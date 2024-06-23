@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -35,7 +34,7 @@ import com.niyas.mishipay.utils.CurrencyFormatter
 fun InvoiceScreen(viewModel: BarcodeViewModel, navController: NavHostController) {
     viewModel.getProductsFromCart()
 
-    val cartItems by viewModel.cartItems.observeAsState(emptyList())
+    val cartItems by viewModel.cartItems.collectAsState(emptyList())
 
     val totalToPayAmount by viewModel.getTotalAmountToPay().collectAsState(initial = 0)
     InvoiceDetailsScreen(navController, cartItems, totalToPayAmount)
