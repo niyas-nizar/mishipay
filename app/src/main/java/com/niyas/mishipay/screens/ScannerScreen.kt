@@ -21,7 +21,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +44,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.niyas.mishipay.R
 import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus
 import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus.START
 import com.niyas.mishipay.data.BarcodeDetectionProcessorStatus.STOP
@@ -137,7 +141,7 @@ private fun NoProductFound() {
                 .fillMaxWidth()
                 .padding(36.dp),
             textAlign = TextAlign.Center,
-            text = "No Matching Product found",
+            text = stringResource(R.string.no_matching_product_found),
             color = Color.White,
             fontSize = 20.sp,
         )
@@ -152,12 +156,19 @@ fun CameraPermissionDeniedMessage(requestPermission: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Camera permission is required to scan barcodes",
-            modifier = Modifier.padding(horizontal = 36.dp)
+            text = stringResource(R.string.camera_permission_is_required_to_scan_barcodes),
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
-        Spacer(modifier = Modifier.height(36.dp))
-        Button(onClick = requestPermission) {
-            Text(text = "Request Camera Permission")
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = requestPermission,
+            shape = RoundedCornerShape(5.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(text = stringResource(R.string.request_camera_permission), color = Color.White)
         }
     }
 }

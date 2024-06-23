@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -33,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,6 +42,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.niyas.mishipay.R
 import com.niyas.mishipay.data.network.ProductData
 import com.niyas.mishipay.navigation.BarcodeScannerScreens
 import com.niyas.mishipay.screens.composables.ReusableDoubleButtons
@@ -91,7 +91,7 @@ private fun cartListingScreen(
 ) {
     Column {
         Text(
-            text = "Items Added to Cart",
+            text = stringResource(R.string.items_added_to_cart),
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -114,7 +114,9 @@ private fun cartListingScreen(
             navController.popBackStack()
         }, positiveButtonAction = {
             navController.navigate(BarcodeScannerScreens.INVOICE_SCREEN.name)
-        }, negativeButtonText = "Add More Items", positiveButtonText = "Checkout")
+        }, negativeButtonText = stringResource(R.string.add_more_items),
+            positiveButtonText = stringResource(R.string.checkout)
+        )
     }
 }
 
@@ -229,7 +231,7 @@ fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduc
                 },
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "-", fontSize = 18.sp, color = Color.White)
+            Text(text = stringResource(R.string.minus), fontSize = 18.sp, color = Color.White)
         }
 
 
@@ -251,7 +253,7 @@ fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduc
                 },
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "+", fontSize = 18.sp, color = Color.White)
+            Text(text = stringResource(R.string.plus), fontSize = 18.sp, color = Color.White)
         }
     }
 }
@@ -261,14 +263,7 @@ fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduc
 )
 @Composable
 fun CartItemPreview() {
-    val product = ProductData(
-        imageUrl = "https://example.com/image1.jpg",
-        price = 100,
-        title = "Mobile",
-        description = "Latest smartphone with amazing features",
-        category = "Electronics",
-        id = "12345"
-    )
+    val product = PreviewStaticData.generateStaticData().first()
     CartItem(product, addProduct = {}, removeProduct = {}, removeWholeProduct = {})
 }
 

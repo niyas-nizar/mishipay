@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.niyas.mishipay.R
 import com.niyas.mishipay.data.network.ProductData
 import com.niyas.mishipay.screens.composables.ReusableDoubleButtons
 import com.niyas.mishipay.screens.previewstaticdata.PreviewStaticData
@@ -50,7 +52,7 @@ private fun InvoiceDetailsScreen(
             .fillMaxWidth()
     ) {
         Text(
-            text = "Order Summary",
+            text = stringResource(R.string.order_summary),
             fontSize = 20.sp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -70,7 +72,7 @@ private fun InvoiceDetailsScreen(
 fun AddressDetails() {
     Column {
         Text(
-            text = "Deliver to",
+            text = stringResource(R.string.deliver_to),
             fontSize = 14.sp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -106,7 +108,7 @@ fun AddressDetails() {
 fun PriceDetails(cartItems: List<ProductData>, totalToPayAmount: Int, editCartItems: () -> Unit) {
     Column {
         Text(
-            text = "Price Details",
+            text = stringResource(R.string.price_details),
             fontSize = 14.sp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -128,13 +130,13 @@ fun PriceDetails(cartItems: List<ProductData>, totalToPayAmount: Int, editCartIt
         )
         val context = LocalContext.current
         val amountToPay = CurrencyFormatter.formatToINR(totalToPayAmount)
-        val totalPayableMessage = "Total to pay - $amountToPay"
+        val totalPayableMessage = stringResource(R.string.total_to_pay, amountToPay)
         ReusableDoubleButtons(
             negativeButtonAction = { editCartItems() },
             positiveButtonAction = {
                 Toast.makeText(context, totalPayableMessage, Toast.LENGTH_SHORT).show()
             },
-            negativeButtonText = "Edit Cart Items",
+            negativeButtonText = stringResource(R.string.edit_cart_items),
             positiveButtonText = totalPayableMessage
         )
     }
@@ -203,7 +205,7 @@ fun ProductPriceListingHeader() {
             .padding(vertical = 2.dp)
     ) {
         Text(
-            text = "Item",
+            text = stringResource(R.string.item),
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier
@@ -212,7 +214,7 @@ fun ProductPriceListingHeader() {
             textAlign = TextAlign.Start
         )
         Text(
-            text = "Price",
+            text = stringResource(R.string.price),
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier
@@ -222,7 +224,7 @@ fun ProductPriceListingHeader() {
         )
 
         Text(
-            text = "Qty",
+            text = stringResource(R.string.quantity),
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier
@@ -231,7 +233,7 @@ fun ProductPriceListingHeader() {
             textAlign = TextAlign.Center
         )
         Text(
-            text = "Total",
+            text = stringResource(R.string.total),
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier
