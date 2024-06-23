@@ -81,7 +81,7 @@ fun AddressDetails() {
         )
 
         Text(
-            text = "Mohamed Niyas N",
+            text = stringResource(R.string.user_name),
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
@@ -91,7 +91,7 @@ fun AddressDetails() {
         )
 
         Text(
-            text = "4/46 Kandathil Parambu Mattancherry, \nKochi 2",
+            text = stringResource(R.string.user_address),
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier
