@@ -1,4 +1,4 @@
-package com.niyas.mishipay.screens
+package com.niyas.mishipay.screens.composables
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.aspectRatio

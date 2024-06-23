@@ -2,6 +2,7 @@ package com.niyas.mishipay.screens
 
 import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -143,7 +144,7 @@ fun IndividualProductPriceListing(productData: ProductData) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 2.dp)
+                .padding(vertical = 2.dp), horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = productData.title,
@@ -151,16 +152,27 @@ fun IndividualProductPriceListing(productData: ProductData) {
                 fontWeight = FontWeight.Light,
                 modifier = Modifier
                     .padding(start = 16.dp)
-                    .weight(1f),
+                    .weight(0.55f),
                 textAlign = TextAlign.Start
             )
+
+            Text(
+                text = productData.price,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Light,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .weight(0.2f),
+                textAlign = TextAlign.Center
+            )
+
             Text(
                 text = "x${productData.quantity}",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Light,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .weight(0.4f),
+                    .padding(start = 8.dp)
+                    .weight(0.1f),
                 textAlign = TextAlign.Center
             )
             val amount = productData.price.toIntOrNull()?.let {
@@ -172,7 +184,7 @@ fun IndividualProductPriceListing(productData: ProductData) {
                 fontWeight = FontWeight.Light,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .weight(0.4f),
+                    .weight(0.25f),
                 textAlign = TextAlign.Center
             )
 
@@ -194,16 +206,26 @@ fun ProductPriceListingHeader() {
             fontWeight = FontWeight.Light,
             modifier = Modifier
                 .padding(start = 16.dp)
-                .weight(1f),
+                .weight(0.55f),
             textAlign = TextAlign.Start
         )
         Text(
-            text = "Quantity",
+            text = "Price",
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .weight(0.4f),
+                .padding(start = 8.dp)
+                .weight(0.2f),
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            text = "Qty",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .weight(0.1f),
             textAlign = TextAlign.Center
         )
         Text(
@@ -211,8 +233,8 @@ fun ProductPriceListingHeader() {
             fontSize = 12.sp,
             fontWeight = FontWeight.Light,
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .weight(0.4f),
+                .padding(horizontal = 8.dp)
+                .weight(0.25f),
             textAlign = TextAlign.Center
         )
 
