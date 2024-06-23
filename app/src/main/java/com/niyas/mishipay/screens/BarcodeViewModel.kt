@@ -47,7 +47,7 @@ class BarcodeViewModel(
     fun getProductsFromCart() {
         viewModelScope.launch {
             val products = repository.getProductsFromCart()
-            _cartItems.value = products
+            _cartItems.emit(products)
         }
     }
 
@@ -56,7 +56,7 @@ class BarcodeViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val updatedProducts = repository.removeAllInstancesOfProduct(productData)
             withContext(Dispatchers.Main) {
-                _cartItems.value = updatedProducts
+                _cartItems.emit(updatedProducts)
                 cartIsEmpty(updatedProducts.isEmpty())
             }
         }
@@ -67,7 +67,7 @@ class BarcodeViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val updatedProducts = repository.removeSingleInstanceOfProduct(productData)
             withContext(Dispatchers.Main) {
-                _cartItems.value = updatedProducts
+                _cartItems.emit(updatedProducts)
                 cartIsEmpty(updatedProducts.isEmpty())
             }
         }
