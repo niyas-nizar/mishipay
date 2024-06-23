@@ -50,6 +50,6 @@ class BarcodeRepository {
     }
 
     fun getTotalAmountToPay() =
-        productsInCart.sumOf { it.price.toInt() * it.quantity }
+        productsInCart.sumOf { it.price * it.quantity }
 
 }
