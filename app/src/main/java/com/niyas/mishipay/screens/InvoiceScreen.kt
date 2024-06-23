@@ -27,6 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.niyas.mishipay.data.network.ProductData
 import com.niyas.mishipay.screens.composables.ReusableDoubleButtons
 import com.niyas.mishipay.screens.previewstaticdata.PreviewStaticData
+import com.niyas.mishipay.utils.CurrencyFormatter
 
 @Composable
 fun InvoiceScreen(viewModel: BarcodeViewModel, navController: NavHostController) {
@@ -126,7 +127,8 @@ fun PriceDetails(cartItems: List<ProductData>, totalToPayAmount: Int, editCartIt
                 .weight(1f)
         )
         val context = LocalContext.current
-        val totalPayableMessage = "Total to pay - $totalToPayAmount Rs"
+        val amountToPay = CurrencyFormatter.formatToINR(totalToPayAmount)
+        val totalPayableMessage = "Total to pay - $amountToPay"
         ReusableDoubleButtons(
             negativeButtonAction = { editCartItems() },
             positiveButtonAction = {
@@ -157,7 +159,7 @@ fun IndividualProductPriceListing(productData: ProductData) {
             )
 
             Text(
-                text = productData.price,
+                text = CurrencyFormatter.formatToINR(productData.price),
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Light,
                 modifier = Modifier
@@ -175,16 +177,16 @@ fun IndividualProductPriceListing(productData: ProductData) {
                     .weight(0.1f),
                 textAlign = TextAlign.Center
             )
-            val amount = productData.price.toIntOrNull()?.let {
-                productData.quantity * it
-            }
+
+            val amount = CurrencyFormatter.formatToINR(productData.quantity * productData.price)
+
             Text(
-                text = amount.toString(),
+                text = amount,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Light,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .weight(0.25f),
+                    .weight(0.3f),
                 textAlign = TextAlign.Center
             )
 
@@ -234,7 +236,7 @@ fun ProductPriceListingHeader() {
             fontWeight = FontWeight.Light,
             modifier = Modifier
                 .padding(horizontal = 8.dp)
-                .weight(0.25f),
+                .weight(0.3f),
             textAlign = TextAlign.Center
         )
 

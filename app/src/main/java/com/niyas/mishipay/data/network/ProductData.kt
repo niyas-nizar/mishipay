@@ -7,7 +7,7 @@ import kotlin.random.Random
 @Parcelize
 data class ProductData(
     val imageUrl: String = "https://picsum.photos/200?random=${Random.nextInt(10)}",
-    val price: String,
+    val price: Int,
     val title: String,
     val description: String,
     val category: String,

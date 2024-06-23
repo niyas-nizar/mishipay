@@ -48,6 +48,7 @@ import com.niyas.mishipay.navigation.BarcodeScannerScreens
 import com.niyas.mishipay.screens.composables.ReusableDoubleButtons
 import com.niyas.mishipay.screens.composables.ShowProgress
 import com.niyas.mishipay.screens.previewstaticdata.PreviewStaticData
+import com.niyas.mishipay.utils.CurrencyFormatter
 
 @Composable
 fun CartScreen(viewModel: BarcodeViewModel, navController: NavHostController) {
@@ -157,7 +158,7 @@ fun CartItem(
                     Text(
                         maxLines = 1,
                         text = productData.title,
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
@@ -179,7 +180,7 @@ fun CartItem(
                 Text(
                     maxLines = 3,
                     text = productData.description,
-                    fontSize = 15.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Light,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -187,8 +188,8 @@ fun CartItem(
                 )
 
                 Text(
-                    text = "${productData.price} Rs",
-                    fontSize = 20.sp,
+                    text = CurrencyFormatter.formatToINR(productData.price),
+                    fontSize = 18.sp,
                     style = TextStyle(fontWeight = FontWeight.SemiBold),
                     modifier = Modifier.padding(8.dp)
                 )
@@ -234,7 +235,7 @@ fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduc
 
         Text(
             text = quantity.toString(),
-            fontSize = 24.sp,
+            fontSize = 16.sp,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
 
@@ -262,7 +263,7 @@ fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduc
 fun CartItemPreview() {
     val product = ProductData(
         imageUrl = "https://example.com/image1.jpg",
-        price = "100",
+        price = 100,
         title = "Mobile",
         description = "Latest smartphone with amazing features",
         category = "Electronics",
