@@ -10,7 +10,7 @@ class BarcodeRepositoryTest {
 
     private lateinit var repository: BarcodeRepository
     private val testProduct = ProductData(
-        price = "79999",
+        price = 79999,
         title = "Apple iPhone 15",
         description = "Apple iPhone 15 with 128GB storage, A15 Bionic chip, 6.1-inch Super Retina XDR display, and dual-camera system.",
         category = "Electronics",
@@ -87,7 +87,7 @@ class BarcodeRepositoryTest {
     @Test
     fun getTotalAmountToPay() {
         val testProduct2 = ProductData(
-            price = "5999",
+            price = 5999,
             title = "Sony WH-1000XM4",
             description = "Sony WH-1000XM4 Wireless Noise Cancelling Over-Ear Headphones with mic for phone-call, 30 hours battery life, and Alexa voice control.",
             category = "Electronics",
