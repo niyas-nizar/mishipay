@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -127,76 +128,75 @@ fun CartItem(
     Card(
         modifier = Modifier.padding(8.dp), shape = RoundedCornerShape(16.dp)
     ) {
-        Column {
-            Row(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                var showIconLoader by remember {
-                    mutableStateOf(false)
-                }
-                Box {
-                    if (showIconLoader) CircularProgressIndicator(
-                        modifier = Modifier.size(75.dp),
-                    )
-                    Icon(rememberAsyncImagePainter(model = ImageRequest.Builder(LocalContext.current)
-                        .data(productData.imageUrl).crossfade(true).build(), onLoading = {
-                        showIconLoader = true
-                    }, onSuccess = {
-                        showIconLoader = false
-                    }),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(75.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                        tint = Color.Unspecified
-                    )
-                }
+        Row(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            var showIconLoader by remember {
+                mutableStateOf(false)
+            }
+            Box(modifier = Modifier.align(Alignment.Top)) {
+                if (showIconLoader) CircularProgressIndicator(
+                    modifier = Modifier.size(75.dp),
+                )
+                Icon(rememberAsyncImagePainter(model = ImageRequest.Builder(LocalContext.current)
+                    .data(productData.imageUrl).crossfade(true).build(), onLoading = {
+                    showIconLoader = true
+                }, onSuccess = {
+                    showIconLoader = false
+                }),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(75.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    tint = Color.Unspecified
+                )
+            }
 
-                Column {
-                    Row {
-                        Text(
-                            maxLines = 1,
-                            text = productData.title,
-                            fontSize = 18.sp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .padding(horizontal = 8.dp)
-                        )
-
-                        Icon(
-                            imageVector = Icons.Default.Clear,
-                            modifier = Modifier
-                                .size(18.dp)
-                                .clickable {
-                                    removeWholeProduct()
-                                },
-                            contentDescription = productData.description
-                        )
-                    }
-
-
+            Column {
+                Row {
                     Text(
-                        maxLines = 3,
-                        text = productData.description,
-                        fontSize = 15.sp,
+                        maxLines = 1,
+                        text = productData.title,
+                        fontSize = 18.sp,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .weight(1f)
                             .padding(horizontal = 8.dp)
                     )
 
-                    Text(
-                        text = "${productData.price} Rs",
-                        fontSize = 20.sp,
-                        style = TextStyle(fontWeight = FontWeight.SemiBold),
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    QuantitySelector(
-                        productData.quantity,
-                        addProduct = addProduct,
-                        removeProduct = removeProduct
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        modifier = Modifier
+                            .size(18.dp)
+                            .clickable {
+                                removeWholeProduct()
+                            },
+                        contentDescription = productData.description
                     )
                 }
+
+
+                Text(
+                    maxLines = 3,
+                    text = productData.description,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Light,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                )
+
+                Text(
+                    text = "${productData.price} Rs",
+                    fontSize = 20.sp,
+                    style = TextStyle(fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.padding(8.dp)
+                )
+                QuantitySelector(
+                    productData.quantity,
+                    addProduct = addProduct,
+                    removeProduct = removeProduct
+                )
             }
         }
     }
@@ -213,11 +213,11 @@ fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduc
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(horizontal = 16.dp)
+        modifier = Modifier.padding(horizontal = 8.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(30.dp)
+                .size(24.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.Gray)
                 .clickable {
@@ -235,13 +235,13 @@ fun QuantitySelector(quantitySelected: Int, addProduct: () -> Unit, removeProduc
         Text(
             text = quantity.toString(),
             fontSize = 24.sp,
-            modifier = Modifier.padding(horizontal = 12.dp)
+            modifier = Modifier.padding(horizontal = 8.dp)
         )
 
 
         Box(
             modifier = Modifier
-                .size(30.dp)
+                .size(24.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.Gray)
                 .clickable {
@@ -269,31 +269,6 @@ fun CartItemPreview() {
         id = "12345"
     )
     CartItem(product, addProduct = {}, removeProduct = {}, removeWholeProduct = {})
-}
-
-@Preview(
-    showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO, showSystemUi = true
-)
-@Composable
-fun CartButtonsPreview() {
-    Column {
-        Button(
-            onClick = { },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        ) {
-            Text(text = "Add More Items")
-        }
-        Button(
-            onClick = { },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        ) {
-            Text(text = "Checkout")
-        }
-    }
 }
 
 
