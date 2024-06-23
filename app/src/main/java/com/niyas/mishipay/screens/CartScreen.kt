@@ -62,14 +62,14 @@ fun CartScreen(viewModel: BarcodeViewModel, navController: NavHostController) {
     cartListingScreen(cartItems, showLoader = {
         showLoader = it
     }, removeWholeProduct = {
-        viewModel.removeSameProductsFromCart(it, cartIsEmpty = { cartIsEmpty ->
+        viewModel.removeAllInstancesOfProduct(it, cartIsEmpty = { cartIsEmpty ->
             if (cartIsEmpty)
                 navController.popBackStack()
         })
     }, addProduct = {
         viewModel.addProductToCart(product = it)
     }, removeProduct = {
-        viewModel.removeProductFromCart(it) { cartIsEmpty ->
+        viewModel.removeSingleInstanceOfProduct(it) { cartIsEmpty ->
             if (cartIsEmpty)
                 navController.popBackStack()
         }

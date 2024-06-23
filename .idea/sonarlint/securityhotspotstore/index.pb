@@ -88,3 +88,7 @@ m
 =app/src/main/java/com/niyas/mishipay/screens/InvoiceScreen.kt,5\2\524f84c03f75618314a4da678dcedaabb282fcfd
 ~
 Napp/src/main/java/com/niyas/mishipay/screens/composables/CartButtonsPreview.kt,7\8\78841a32ac508a1ddb6a9971f872d9dc93ea1f03
+
+Oapp/src/main/java/com/niyas/mishipay/data/network/response/AvailableProducts.kt,a\b\abd9b83b55157e57f73758268101ccdcbab55951
+x
+Happ/src/test/java/com/niyas/mishipay/repository/BarcodeRepositoryTest.kt,c\8\c870107a6d60adaa79f42f13dc1948df53fe2d72
