@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">MishiPay</string>
+    <string name="items_added_to_cart">Items Added to Cart</string>
+    <string name="add_more_items">Add More Items</string>
+    <string name="checkout">Checkout</string>
+    <string name="minus">-</string>
+    <string name="plus">+</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="deliver_to">Deliver to</string>
+    <string name="price_details">Price Details</string>
+    <string name="total_to_pay">Total to pay - %1$s</string>
+    <string name="edit_cart_items">Edit Cart Items</string>
+    <string name="item">Item</string>
+    <string name="price">Price</string>
+    <string name="quantity">Qty</string>
+    <string name="total">Total</string>
+    <string name="no_matching_product_found">No Matching Product found</string>
+    <string name="camera_permission_is_required_to_scan_barcodes">Camera permission is required to scan barcodes</string>
+    <string name="request_camera_permission">Request Camera Permission</string>
+    <string name="user_name">Mohamed Niyas N</string>
+    <string name="user_address">4/46 Kandathil Parambu Mattancherry, \nKochi 2</string>
 </resources>

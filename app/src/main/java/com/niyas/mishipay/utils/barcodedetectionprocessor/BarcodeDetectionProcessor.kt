@@ -16,10 +16,7 @@ class BarcodeDetectionProcessor(private val detectionListener: DetectionListener
     private var scanner: BarcodeScanner? = null
 
     private val options = BarcodeScannerOptions.Builder()
-        .setBarcodeFormats(
-            Barcode.FORMAT_QR_CODE,
-            Barcode.FORMAT_AZTEC
-        )
+        .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)
         .build()
 
     fun startProcessor() {
@@ -40,7 +37,9 @@ class BarcodeDetectionProcessor(private val detectionListener: DetectionListener
     }
 
     override fun onSuccess(result: List<Barcode>?, rect: Rect) {
-        result?.first()?.let { detectionListener.onDetectionSuccess(it) }
+        result?.firstOrNull()?.let {
+            detectionListener.onDetectionSuccess(it)
+        }
     }
 }
 
